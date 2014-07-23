@@ -75,6 +75,7 @@ static font_t *main_font, *alt_font;
 static uint32_t attrs = 0;
 static bool dock = false;
 static bool topbar = true;
+static bool overlay = false;
 static int bw = -1, bh = -1, bx = 0, by = 0;
 static int bu = 1; /* Underline height */
 static char *mfont, *afont;
@@ -493,14 +494,17 @@ set_ewmh_atoms (void)
     /* Prepare the strut array */
     for (monitor_t *mon = monhead; mon; mon = mon->next) {
         int strut[12] = {0};
-        if (topbar) {
-            strut[2] = bh;
-            strut[8] = mon->x;
-            strut[9] = mon->x + mon->width;
-        } else {
-            strut[3]  = bh;
-            strut[10] = mon->x;
-            strut[11] = mon->x + mon->width;
+        if (!overlay)
+        {
+            if (topbar) {
+                strut[2] = bh;
+                strut[8] = mon->x;
+                strut[9] = mon->x + mon->width;
+            } else {
+                strut[3]  = bh;
+                strut[10] = mon->x;
+                strut[11] = mon->x + mon->width;
+            }
         }
 
         xcb_change_property(c, XCB_PROP_MODE_REPLACE, mon->window, atom_list[NET_WM_WINDOW_TYPE], XCB_ATOM_ATOM, 32, 1, &atom_list[NET_WM_WINDOW_TYPE_DOCK]);
@@ -1025,7 +1029,7 @@ main (int argc, char **argv)
     ugc = fgc;
 
     char ch;
-    while ((ch = getopt(argc, argv, "hg:bdf:a:pu:B:F:")) != -1) {
+    while ((ch = getopt(argc, argv, "hg:bdof:a:pu:B:F:")) != -1) {
         switch (ch) {
             case 'h':
                 printf ("usage: %s [-h | -g | -b | -d | -f | -a | -p | -u | -B | -F]\n"
@@ -1043,6 +1047,7 @@ main (int argc, char **argv)
             case 'p': permanent = true; break;
             case 'b': topbar = false; break;
             case 'd': dock = true; break;
+            case 'o': overlay = true; break;
             case 'f': parse_font_list(optarg); break;
             case 'u': bu = strtoul(optarg, NULL, 10); break;
             case 'B': dbgc = bgc = parse_color(optarg, NULL, scr->black_pixel); break;

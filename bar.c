@@ -1037,6 +1037,7 @@ main (int argc, char **argv)
                         "\t-g Set the bar geometry {width}x{height}+{xoffset}+{yoffset}\n"
                         "\t-b Put bar at the bottom of the screen\n"
                         "\t-d Force docking (use this if your WM isn't EWMH compliant)\n"
+                        "\t-o Enable overlay mode (does not allocate space for the bar)\n"
                         "\t-f Bar font list, comma separated\n"
                         "\t-p Don't close after the data ends\n"
                         "\t-u Set the underline/overline height in pixels\n"
